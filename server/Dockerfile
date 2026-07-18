@@ -1,15 +1,17 @@
-# MCP server image (skeleton).
-# TODO: pin a specific base image digest before production use.
+# MCP server image.
+# NOTE: not built/run in the current dev environment (no Docker available),
+# but kept correct for anyone who wants to containerise the server.
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# TODO: install dependencies (build step, not run during scaffolding).
+# Install runtime dependencies first for better layer caching.
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# TODO: copy the server package.
-COPY . ./
+# Copy the server package into /app/server so `python -m server.server` resolves.
+COPY . ./server/
 
-# TODO: adjust entrypoint/transport as needed (see server/server.py).
+# The server speaks MCP over stdio, so there is no port to expose. A host/client
+# launches this image and attaches to its stdin/stdout.
 CMD ["python", "-m", "server.server"]

@@ -1,4 +1,7 @@
-# MCP server dependencies (declared only — do NOT install as part of scaffolding).
-# See MEMORY.md checklist for scope.
-mcp
-pydantic
+# MCP server runtime dependencies.
+# The official Model Context Protocol SDK. It pulls in pydantic, httpx and anyio,
+# which the tools/resources use, so no separate pins are needed for those.
+mcp>=1.6,<2
+
+# Dev/test only (not required at runtime):
+#   pip install pytest

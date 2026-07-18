@@ -1,0 +1,2 @@
+Hello from the sandbox.
+This file is safe to read via the file_reader tool.

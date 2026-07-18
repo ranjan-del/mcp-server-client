@@ -1,18 +1,23 @@
-# Docker Compose for the MCP server (skeleton).
-# See MEMORY.md checklist: `docker compose up` runs server (+ client demo).
+# Docker Compose for the MCP demo.
+#
+# This project uses the MCP stdio transport: the client launches the server as a
+# subprocess and talks to it over stdin/stdout. So `docker compose up` runs the
+# CLIENT demo, which spawns the server itself and prints the full round trip
+# (list tools -> call tool -> read resource -> render prompt).
+#
+# NOTE: Docker is NOT available in the dev environment this was built in, so this
+# file is provided correct-but-unrun. Locally the demo runs with plain Python
+# (see README "Run locally").
 services:
-  server:
+  demo:
     build:
-      context: ./server
+      context: .
       dockerfile: Dockerfile
-    image: mcp-server:dev
-    # TODO: expose the chosen transport/port and wire config.
-    # ports:
-    #   - "8000:8000"
+    image: mcp-server-client:dev
+    # Optional real-API keys; the tools default to offline stubs without them.
+    environment:
+      - WEATHER_API_KEY=${WEATHER_API_KEY:-}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+    # Mount local config (optional; server falls back to config.example.json).
     volumes:
       - ./config:/app/config:ro
-    environment:
-      - MCP_CONFIG=/app/config/config.json
-    restart: unless-stopped
-
-  # TODO: add a `client` service for the demo flow (see MEMORY.md: MCP Client).

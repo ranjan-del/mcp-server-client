@@ -1,3 +1,3 @@
-# MCP client dependencies (declared only — do NOT install as part of scaffolding).
-# See MEMORY.md checklist for scope.
-mcp
+# MCP client runtime dependencies.
+# The official Model Context Protocol SDK (client half).
+mcp>=1.6,<2

@@ -3,10 +3,17 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+.pytest_cache/
+*.db
 
 # Environment / secrets
 .env
 config/config.json
+
+# Node / frontend (none today, but kept for completeness)
+node_modules/
+dist/
+.angular/
 
 # OS
 .DS_Store
