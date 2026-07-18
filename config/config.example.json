@@ -1,0 +1,22 @@
+{
+  "_comment": "Example configuration. Copy to config.json and fill in real values. Do NOT commit secrets.",
+  "server": {
+    "transport": "stdio",
+    "host": "0.0.0.0",
+    "port": 8000
+  },
+  "tools": {
+    "weather": {
+      "api_key": "TODO: your weather provider API key"
+    },
+    "github": {
+      "token": "TODO: your GitHub personal access token"
+    },
+    "database": {
+      "connection_string": "TODO: your database connection string"
+    }
+  },
+  "resources": {
+    "files_root": "./data"
+  }
+}

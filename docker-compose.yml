@@ -1,0 +1,18 @@
+# Docker Compose for the MCP server (skeleton).
+# See MEMORY.md checklist: `docker compose up` runs server (+ client demo).
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: mcp-server:dev
+    # TODO: expose the chosen transport/port and wire config.
+    # ports:
+    #   - "8000:8000"
+    volumes:
+      - ./config:/app/config:ro
+    environment:
+      - MCP_CONFIG=/app/config/config.json
+    restart: unless-stopped
+
+  # TODO: add a `client` service for the demo flow (see MEMORY.md: MCP Client).
