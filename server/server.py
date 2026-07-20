@@ -20,11 +20,11 @@ from __future__ import annotations
 
 from mcp.server.fastmcp import FastMCP
 
-# Each feature module exposes a `register(mcp)` function that attaches its
-# tools/resources/prompts. Importing them here keeps server.py a thin wiring layer.
-from server.tools import calculator, database, file_reader, github, notes, weather
-from server.resources import resources
-from server.prompts import prompts
+# Each feature package exposes a `register_all(mcp)` helper that attaches its
+# tools/resources/prompts. Delegating to them keeps server.py a thin wiring layer.
+from server.tools import register_all as register_tools
+from server.resources import register_all as register_resources
+from server.prompts import register_all as register_prompts
 
 
 def build_server() -> FastMCP:
@@ -37,18 +37,13 @@ def build_server() -> FastMCP:
     mcp = FastMCP("mcp-server-client")
 
     # Tools (actions the client can invoke).
-    calculator.register(mcp)
-    weather.register(mcp)
-    file_reader.register(mcp)
-    github.register(mcp)
-    database.register(mcp)
-    notes.register(mcp)
+    register_tools(mcp)
 
     # Resources (readable data the client can fetch by URI).
-    resources.register(mcp)
+    register_resources(mcp)
 
     # Prompts (reusable, parameterised message templates).
-    prompts.register(mcp)
+    register_prompts(mcp)
 
     return mcp
 

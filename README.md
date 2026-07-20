@@ -10,7 +10,8 @@ server advertises capabilities and how a client discovers and calls them.
 > that does a real stdio round trip against the server. Verified on Python 3.14
 > with `pytest` (39 tests passing, including a live client↔server stdio smoke
 > test). Everything runs **offline with no API keys** — tools that could hit a
-> network default to deterministic local stubs.
+> network default to deterministic local stubs. The pytest suite runs in CI on
+every push and pull request (see `.github/workflows/ci.yml`).
 
 ---
 
@@ -202,7 +203,6 @@ a future improvement.
   shot).
 - Optional persistent SQLite file for the database/notes tools.
 - Capture a terminal demo GIF and screenshots.
-- CI workflow to run the pytest suite on push.
 
 ---
 
