@@ -11,7 +11,7 @@ discovery/invocation lifecycle so you can see MCP end-to-end:
   3. call a tool (the calculator)
   4. list + read a resource
   5. list + render a prompt template
-  6. demonstrate progress/streaming handling
+  6. call a streaming tool and print its progress notifications live
 
 If the ``mcp`` SDK is not importable for some reason, ``main`` falls back to a
 "direct" demo that exercises the tool modules in-process, so the file always runs
@@ -28,6 +28,18 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+
+
+async def _print_progress(progress: float, total: float | None,
+                          message: str | None) -> None:
+    """Progress callback handed to ``session.call_tool``.
+
+    The SDK invokes this once per ``notifications/progress`` message the server
+    sends during a call. Printing a percentage here is the whole point of the
+    streaming demo: the numbers appear *before* the final result does.
+    """
+    pct = f"{(progress / total * 100):5.1f}%" if total else "  ?  "
+    print(f"  [progress {pct}] {message or ''}".rstrip())
 
 
 async def run_stdio_demo() -> None:
@@ -87,6 +99,14 @@ async def run_stdio_demo() -> None:
                 print(preview)
             print()
 
+            # Templated resources are not returned by resources/list (only their
+            # templates are), so read one by hand to show the {name} substitution.
+            print("== Reading templated resource: files://sample.txt ==")
+            sample = await session.read_resource("files://sample.txt")
+            for content in sample.contents:
+                print(getattr(content, "text", "").rstrip())
+            print()
+
             # 5. List + render a prompt template.
             prompts = await session.list_prompts()
             print("== Prompts advertised by the server ==")
@@ -104,15 +124,18 @@ async def run_stdio_demo() -> None:
                 print(f"  [{message.role}] {text}")
             print()
 
-            # 6. Streaming / progress. The MCP protocol streams *progress
-            #    notifications* during a long call rather than partial token text.
-            #    Our reference tools return complete results in one shot, so there
-            #    is nothing to stream here; we simply note how it would be wired.
-            print("== Streaming ==")
-            print("  Reference tools return complete results, so no incremental")
-            print("  chunks are emitted. For a long-running tool the server would")
-            print("  call ctx.report_progress(...) and the client would receive")
-            print("  progress notifications via a progress callback.")
+            # 6. Streaming / progress. In MCP the *result* of a tool call still
+            #    arrives in one piece; what streams is a series of
+            #    `notifications/progress` messages sent while the call is in
+            #    flight. `file_reader` reads its file in chunks and reports after
+            #    each one, so passing a progress_callback shows the work live.
+            print("== Streaming: calling file_reader('sample.txt') with progress ==")
+            await session.call_tool(
+                "file_reader",
+                {"relative_path": "sample.txt"},
+                progress_callback=_print_progress,
+            )
+            print("  -> call finished; the result itself arrived in one response")
 
     print("\n== Demo complete ==")
 
