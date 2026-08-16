@@ -1,5 +1,15 @@
 # mcp-server-client
 
+| | |
+|---|---|
+| **What it is** | A complete Model Context Protocol implementation: a server exposing all three primitives, and a client that discovers and calls them over stdio |
+| **Stack** | Python · MCP SDK · SQLite (in-memory) · stdio transport |
+| **Run it** | `docker compose up --build`, or `python client/main.py` to drive the server directly |
+| **Tests** | 45 (pytest), run in CI on every push |
+| **Read first** | `server/` for the primitives, then `client/` for the discovery-and-call sequence |
+
+**Why it is worth reading:** MCP is easy to describe in a paragraph and surprisingly fiddly in practice. This implements tools, resources *and* prompt templates rather than only tools, and the client watches progress notifications stream back from a long-running call, which is the part most examples skip.
+
 A complete, runnable **Model Context Protocol (MCP)** implementation in Python: a server that exposes
 all three MCP primitives (tools, resources and prompt templates) and a client that connects to it over
 the stdio transport, discovers what it offers, calls it, and watches progress notifications stream back.
